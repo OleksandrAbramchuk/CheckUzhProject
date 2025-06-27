@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from 'styled-components';
 
 import logo from '../assets/logo1.png';
@@ -17,7 +17,6 @@ const HeaderContainer = styled.div`
     align-items: center;
     justify-content: space-between;
 `;
-
 const Logo = styled.img`
     width: 250px;
     height: 200px;
@@ -63,16 +62,19 @@ const RegisterButton = styled.button`
     text-align: center;
     line-height: 48px;
     cursor: pointer;
-    margin-right: 50px;
     text-decoration: none;
+
     &:hover {
         background: #4e8c5e;
     }
 `;
-
 const Header = () => {
-    const { isAuthenticated, logout } = useAuth(true); // Використовуємо стан авторизації
+    const { isAuthenticated, logout } = useAuth(true);
     const navigate = useNavigate();
+    const location = useLocation();
+    const pathname = location.pathname;
+
+    const isAuthOrRegisterPage = pathname === "/authorization" || pathname === "/register";
 
     const handleLogout = () => {
         logout();
@@ -81,8 +83,11 @@ const Header = () => {
 
     return (
         <HeaderContainer>
-            <Logo src={logo} alt="CheckUzh Logo" />
-            {isAuthenticated && (
+            <Link to="/">
+                <Logo src={logo} alt="CheckUzh Logo" />
+            </Link>
+
+            {isAuthenticated && !isAuthOrRegisterPage && (
                 <NavLinks>
                     <NavLink to="/">Головна</NavLink>
                     <NavLink to="/favorites">Уподобане</NavLink>
@@ -90,12 +95,15 @@ const Header = () => {
                     <NavLink to="/profile">Акаунт</NavLink>
                 </NavLinks>
             )}
-            {isAuthenticated ? (
-                <RegisterButton onClick={handleLogout}>Вийти</RegisterButton>
-            ) : (
-                <RegisterButton as={Link} to="/authorization">
-                    Увійти/Реєстрація
-                </RegisterButton>
+
+            {!isAuthOrRegisterPage && (
+                isAuthenticated ? (
+                    <RegisterButton onClick={handleLogout}>Вийти</RegisterButton>
+                ) : (
+                    <RegisterButton as={Link} to="/authorization">
+                        Увійти/Реєстрація
+                    </RegisterButton>
+                )
             )}
         </HeaderContainer>
     );

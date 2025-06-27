@@ -94,28 +94,27 @@ const RegistrationPage = () => {
         });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
-        try {
-            const response = await fetch("http://localhost:5000/api/users/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
 
-            const data = await response.json();
+        const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-            if (response.ok) {
-                setMessage("Реєстрація успішна!");
-                navigate("/authorization"); // Перенаправлення на сторінку входу
-            } else {
-                setMessage(data.message || "Помилка реєстрації");
-            }
-        } catch {
-            setMessage("Помилка з'єднання із сервером");
+        if (existingUsers.find((u) => u.username === formData.username)) {
+            setMessage("Користувач з таким нікнеймом вже існує");
+            return;
         }
+
+        const newUser = {
+            ...formData,
+            name: "",
+            email: "",
+            biography: "",
+            avatar: "",
+        };
+
+        localStorage.setItem("users", JSON.stringify([...existingUsers, newUser]));
+        setMessage("Реєстрація успішна!");
+        navigate("/authorization");
     };
 
     return (

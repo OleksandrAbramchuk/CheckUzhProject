@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 const Profile = () => {
     const [nickname, setNickname] = useState("");
@@ -6,7 +6,19 @@ const Profile = () => {
     const [status, setStatus] = useState("Місцевий");
     const [email, setEmail] = useState("");
     const [biography, setBiography] = useState("");
-    const [avatar, setAvatar] = useState();
+    const [avatar, setAvatar] = useState("");
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem("currentUser"));
+        if (user) {
+            setNickname(user.username);
+            setName(user.name || "");
+            setStatus(user.status || "Місцевий");
+            setEmail(user.email || "");
+            setBiography(user.biography || "");
+            setAvatar(user.avatar || "");
+        }
+    }, []);
 
     const handleAvatarChange = (e) => {
         const file = e.target.files[0];
@@ -17,18 +29,40 @@ const Profile = () => {
         }
     };
 
+    const handleSaveProfile = () => {
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const updatedUsers = users.map((user) => {
+            if (user.username === nickname) {
+                return {
+                    ...user,
+                    name,
+                    status,
+                    email,
+                    biography,
+                    avatar,
+                };
+            }
+            return user;
+        });
+
+        const updatedUser = updatedUsers.find((u) => u.username === nickname);
+
+        localStorage.setItem("users", JSON.stringify(updatedUsers));
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+        alert("Профіль оновлено!");
+    };
+
     return (
         <div style={styles.container}>
             <h1 style={styles.header}>Акаунт</h1>
             <div style={styles.wrapper}>
-                {/* Profile Section */}
                 <div style={styles.profileSection}>
                     <h2 style={styles.subHeader}>Профіль</h2>
                     <div style={styles.avatarWrapper}>
                         {avatar ? (
                             <img src={avatar} alt="Avatar" style={styles.avatar} />
                         ) : (
-                            <div style={styles.placeholderAvatar}>Завантажте аватар</div>
+                            <div style={styles.placeholderAvatar}>Аватар</div>
                         )}
                         <input
                             type="file"
@@ -42,8 +76,7 @@ const Profile = () => {
                         <input
                             type="text"
                             value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            placeholder="Введіть нікнейм"
+                            disabled
                             style={styles.input}
                         />
                     </label>
@@ -80,7 +113,6 @@ const Profile = () => {
                     </label>
                 </div>
 
-                {/* Biography Section */}
                 <div style={styles.biographySection}>
                     <h2 style={styles.subHeader}>Біографія</h2>
                     <textarea
@@ -89,9 +121,11 @@ const Profile = () => {
                         onChange={(e) => setBiography(e.target.value)}
                         style={styles.textarea}
                     />
+                    <button onClick={handleSaveProfile} style={styles.saveButton}>
+                        Зберегти профіль
+                    </button>
                 </div>
 
-                {/* Activity Section */}
                 <div style={styles.activitySection}>
                     <h2 style={styles.subHeader}>Активність</h2>
                     <p>
@@ -196,6 +230,16 @@ const styles = {
         backgroundColor: "#fff",
         padding: "20px",
         textAlign: "left",
+    },
+    saveButton: {
+        marginTop: "10px",
+        padding: "10px 20px",
+        fontSize: "1rem",
+        backgroundColor: "#61a474",
+        color: "#fff",
+        border: "none",
+        borderRadius: "10px",
+        cursor: "pointer",
     },
 };
 

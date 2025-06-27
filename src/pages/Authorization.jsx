@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-import { useAuth } from "../context/AuthContext"; // Імпортуємо хук useAuth
+import { useAuth } from "../context/AuthContext";
 
 const Container = styled.div`
     display: flex;
@@ -61,9 +61,24 @@ const LoginButton = styled.button`
         background-color: #4e8d5e;
     }
 `;
+const LoginLink = styled.p`
+    margin-top: 15px;
+    font-size: 0.9em;
+    color: #333;
+
+    a {
+        color: #61a474;
+        font-weight: bold;
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+`;
 
 const AuthorizationPage = () => {
-    const { login } = useAuth(); // Використовуємо хук useAuth для отримання функції login
+    const { login } = useAuth();
     const [formData, setFormData] = useState({ username: "", password: "" });
     const [error, setError] = useState("");
     const navigate = useNavigate();
@@ -75,31 +90,26 @@ const AuthorizationPage = () => {
         });
     };
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = (event) => {
         event.preventDefault();
         setError("");
 
-        try {
-            const response = await fetch("http://localhost:5000/api/users/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(formData),
-            });
+        const users = JSON.parse(localStorage.getItem("users")) || [];
+        const matchedUser = users.find(
+            (user) =>
+                user.username === formData.username &&
+                user.password === formData.password
+        );
 
-            const data = await response.json();
-
-            if (response.ok) {
-                login(); // Викликаємо функцію login, щоб оновити стан автентифікації
-                navigate("/profile"); // Переходимо на сторінку профілю
-            } else {
-                setError(data.message || "Невірний логін або пароль");
-            }
-        } catch {
-            setError("Помилка з'єднання із сервером");
+        if (matchedUser) {
+            localStorage.setItem("currentUser", JSON.stringify(matchedUser));
+            login();
+            navigate("/profile");
+        } else {
+            setError("Невірний логін або пароль");
         }
     };
+
 
     return (
         <Container>
@@ -121,6 +131,9 @@ const AuthorizationPage = () => {
                     onChange={handleChange}
                 />
                 <LoginButton type="submit">Увійти</LoginButton>
+                <LoginLink>
+                    Немає акаунту? <a href="/register">Зареєструватись</a>
+                </LoginLink>
             </LoginForm>
         </Container>
     );
