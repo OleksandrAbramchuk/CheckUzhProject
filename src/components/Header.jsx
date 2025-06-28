@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Link, useLocation,useNavigate } from "react-router-dom";
 import styled from 'styled-components';
 
 import logo from '../assets/logo1.png';
@@ -51,7 +51,7 @@ const RegisterButton = styled.button`
     width: 191px;
     height: 48px;
     padding: 0px 16px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.09);
+    box-shadow: 0px 4px 4px rgb(44, 44, 44);
     background: #61a474;
     color: #ffffff;
     border: 2px solid #61a474;
@@ -63,6 +63,8 @@ const RegisterButton = styled.button`
     line-height: 48px;
     cursor: pointer;
     text-decoration: none;
+    position: relative;
+    left: -10px;
 
     &:hover {
         background: #4e8c5e;

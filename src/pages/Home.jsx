@@ -26,7 +26,6 @@ const ContentSection = styled.div`
     display: flex;
     align-items: center;
     background-color: rgba(240, 240, 240, 0);
-    padding: 20px;
     border-radius: 8px;
     margin-bottom: 20px;
 `;
@@ -43,6 +42,8 @@ const GreenBlock = styled.div`
 `;
 
 const ImagePlaceholder = styled.div`
+    position: relative;
+    left: 0;
     width: 450px;
     height: 650px;
     box-shadow: 1px 15px 8px rgba(0, 0, 0, 0.37);

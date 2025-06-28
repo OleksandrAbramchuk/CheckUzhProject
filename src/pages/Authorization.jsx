@@ -4,71 +4,93 @@ import styled from "styled-components";
 
 import { useAuth } from "../context/AuthContext";
 
-const Container = styled.div`
+const theme = {
+    colors: {
+        background: '#F4F7FA',
+        cardBg: '#FFFFFF',
+        primary: '#60ccad',
+        accent: '#5ae5a3',
+        textDark: '#2C3E50',
+        border: '#E0E6ED',
+        shadow: 'rgba(0, 0, 0, 0.08)',
+        error: '#E74C3C',
+    },
+};
+
+const PageWrapper = styled.div`
+    min-height: 100vh;
+    background-color: ${theme.colors.background};
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
-    background-color: #d3d3d3;
 `;
 
-const LoginForm = styled.form`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 40px;
-    background-color: white;
-    border-radius: 16px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    border: 2px solid #61a474;
-    width: 400px;
+const Card = styled.form`
+    background-color: ${theme.colors.cardBg};
+    border-radius: 12px;
+    box-shadow: 0 4px 16px ${theme.colors.shadow};
+    width: 100%;
+    max-width: 400px;
+    padding: 32px;
 `;
 
 const Title = styled.h2`
-    font-size: 2em;
-    color: #000;
-    margin-bottom: 20px;
+    font-size: 24px;
+    font-weight: 600;
+    color: ${theme.colors.textDark};
+    text-align: center;
+    margin-bottom: 24px;
 `;
 
 const Input = styled.input`
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    font-size: 1em;
-    border: 2px solid #61a474;
+    padding: 12px 16px;
+    border: 1px solid ${theme.colors.border};
     border-radius: 8px;
-    outline: none;
-    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: 14px;
+    margin-bottom: 16px;
+    transition: border 0.3s;
+    box-sizing: border-box;
 
     &:focus {
-        border-color: #4e8d5e;
+        outline: none;
+        border-color: ${theme.colors.primary};
+        box-shadow: 0 0 0 2px ${theme.colors.primary}40;
     }
 `;
 
-const LoginButton = styled.button`
+const Button = styled.button`
     width: 100%;
-    padding: 10px;
-    font-size: 1em;
+    padding: 12px;
+    background-color: ${theme.colors.primary};
     color: white;
-    background-color: #61a474;
     border: none;
-    border-radius: 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    margin-top: 10px;
-    transition: background-color 0.3s ease;
+    margin-top: 8px;
+    transition: background 0.3s;
 
     &:hover {
-        background-color: #4e8d5e;
+        background-color: ${theme.colors.primary}cc;
     }
 `;
-const LoginLink = styled.p`
-    margin-top: 15px;
-    font-size: 0.9em;
-    color: #333;
+
+const ErrorText = styled.p`
+    color: ${theme.colors.error};
+    font-size: 14px;
+    margin-bottom: 8px;
+`;
+
+const LinkText = styled.p`
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
 
     a {
-        color: #61a474;
-        font-weight: bold;
+        color: ${theme.colors.primary};
+        font-weight: 500;
         text-decoration: none;
 
         &:hover {
@@ -83,26 +105,21 @@ const AuthorizationPage = () => {
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
-    const handleChange = (event) => {
-        setFormData({
-            ...formData,
-            [event.target.name]: event.target.value,
-        });
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = (e) => {
+        e.preventDefault();
         setError("");
 
         const users = JSON.parse(localStorage.getItem("users")) || [];
-        const matchedUser = users.find(
-            (user) =>
-                user.username === formData.username &&
-                user.password === formData.password
+        const user = users.find(
+            (u) => u.username === formData.username && u.password === formData.password
         );
 
-        if (matchedUser) {
-            localStorage.setItem("currentUser", JSON.stringify(matchedUser));
+        if (user) {
+            localStorage.setItem("currentUser", JSON.stringify(user));
             login();
             navigate("/profile");
         } else {
@@ -110,32 +127,31 @@ const AuthorizationPage = () => {
         }
     };
 
-
     return (
-        <Container>
-            <LoginForm onSubmit={handleSubmit}>
+        <PageWrapper>
+            <Card onSubmit={handleSubmit}>
                 <Title>Вхід</Title>
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {error && <ErrorText>{error}</ErrorText>}
                 <Input
                     type="text"
                     name="username"
-                    placeholder="Введіть нікнейм"
+                    placeholder="Нікнейм"
                     value={formData.username}
                     onChange={handleChange}
                 />
                 <Input
                     type="password"
                     name="password"
-                    placeholder="Введіть пароль"
+                    placeholder="Пароль"
                     value={formData.password}
                     onChange={handleChange}
                 />
-                <LoginButton type="submit">Увійти</LoginButton>
-                <LoginLink>
-                    Немає акаунту? <a href="/register">Зареєструватись</a>
-                </LoginLink>
-            </LoginForm>
-        </Container>
+                <Button type="submit">Увійти</Button>
+                <LinkText>
+                    Немає акаунту? <a href="/register">Зареєструватися</a>
+                </LinkText>
+            </Card>
+        </PageWrapper>
     );
 };
 
