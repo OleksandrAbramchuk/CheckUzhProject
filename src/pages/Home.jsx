@@ -7,6 +7,7 @@ import anotherPlaceImage from "../assets/scansen.png";
 import GreenButton from '../components/GreenButton';
 import PlaceCard from "../components/PlaceCard";
 import SearchBar from "../components/SearchBar";
+import Map from '../components/Map';
 
 
 const HeaderContent = styled.div`
@@ -85,6 +86,7 @@ const Home = () => {
                     <SearchBar placeholder="Пошук" />
                 </HeaderContent>
             </GreenBlock>
+            <Map></Map>
             <PlaceCard
                 image={castleImage}
                 title="Ужгородський замок"
