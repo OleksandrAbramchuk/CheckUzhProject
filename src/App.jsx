@@ -7,6 +7,7 @@ import { AuthProvider } from "./context/AuthContext";
 import Authorization from "./pages/Authorization";
 import Favorites from "./pages/Favorites";
 import Home from "./pages/Home";
+import PlacePage from "./pages/PlacePage";
 import Profile from "./pages/Profile";
 import Quests from "./pages/Quests";
 import Registration from "./pages/Registration";
@@ -21,6 +22,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/authorization" element={<Authorization />} />
                         <Route path="/register" element={<Registration />} />
+                        <Route path="/place/:id" element={<PlacePage />} />
 
                         <Route
                             path="/quests"

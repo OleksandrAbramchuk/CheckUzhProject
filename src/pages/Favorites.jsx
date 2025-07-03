@@ -8,13 +8,12 @@ import PlaceCard from "../components/LikedPlaceCard";
 const likedPlaces = [
     {
         id: 1,
-        image:{castleImage},// Заміни на коректний шлях
+        image:{castleImage},
         title: "Ужгородський замок",
         rating: "10/10",
     },
 ];
 
-// Стилі для сторінки
 const PageContainer = styled.div`
     padding: 20px;
     background-color: #f0f0f0;
@@ -45,6 +44,7 @@ const Favorites = () => {
                 {likedPlaces.map((place) => (
                     <PlaceCard
                         key={place.id}
+                        id={place.id}
                         image={place.image}
                         title={place.title}
                         rating={place.rating}

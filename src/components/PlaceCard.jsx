@@ -1,11 +1,10 @@
-// src/components/PlaceCard.jsx
 import PropTypes from "prop-types";
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 
 import GreenButton from "./GreenButton";
 
-// Стилі для головного контейнера
 const CardContainer = styled.div`
     width: 900px;
     height: 300px;
@@ -17,10 +16,9 @@ const CardContainer = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 20px auto; /* Центрування на сторінці */
+    margin: 20px auto;
 `;
 
-// Стилі для зображення
 const Image = styled.img`
     width: 400px;
     height: 280px;
@@ -29,7 +27,6 @@ const Image = styled.img`
     margin-right: 20px;
 `;
 
-// Стилі для текстового контенту
 const Content = styled.div`
     flex: 1;
     display: flex;
@@ -38,7 +35,6 @@ const Content = styled.div`
     height: 100%;
 `;
 
-// Стилі для заголовка
 const Title = styled.h2`
     font-size: 25px;
     font-weight: bold;
@@ -46,7 +42,6 @@ const Title = styled.h2`
     margin-top: 15px;
 `;
 
-// Стилі для опису
 const Description = styled.p`
     font-size: 18px;
     color: #666;
@@ -55,7 +50,6 @@ const Description = styled.p`
     flex-grow: 1;
 `;
 
-// Стилі для рейтингу
 const RatingContainer = styled.div`
     display: flex;
     align-items: center;
@@ -63,7 +57,6 @@ const RatingContainer = styled.div`
     color: #444;
 `;
 
-// Стилі для кнопки "Деталі" та рейтингу
 const BottomContainer = styled.div`
     display: flex;
     justify-content: space-between;
@@ -72,14 +65,13 @@ const BottomContainer = styled.div`
     margin-bottom: 10px;
 `;
 
-// Стилі для кнопки-сердечка
 const HeartButton = styled.button`
     background: none;
     border: none;
-    font-size: 48px; /* Збільшений розмір */
+    font-size: 48px;
     cursor: pointer;
-    color: ${(props) => (props.isLiked ? "red" : "#ccc")};
-    margin-right: 10px; /* Відступ між сердечком і кнопкою "Деталі" */
+    color: ${(properties) => (properties.isLiked ? "red" : "#ccc")};
+    margin-right: 10px;
     transition: color 0.3s;
 
     &:hover {
@@ -87,7 +79,7 @@ const HeartButton = styled.button`
     }
 `;
 
-const PlaceCard = ({ image, title, description, rating }) => {
+const PlaceCard = ({ id, image, title, description, rating }) => {
     const [isLiked, setIsLiked] = useState(false);
 
     const toggleLike = () => {
@@ -106,7 +98,9 @@ const PlaceCard = ({ image, title, description, rating }) => {
                         <HeartButton isLiked={isLiked} onClick={toggleLike}>
                             ♥
                         </HeartButton>
-                        <GreenButton>Деталі</GreenButton>
+                        <Link to={`/place/${id}`}>
+                            <GreenButton>Деталі</GreenButton>
+                        </Link>
                     </div>
                 </BottomContainer>
             </Content>
@@ -114,15 +108,14 @@ const PlaceCard = ({ image, title, description, rating }) => {
     );
 };
 
-// Валідація пропсів
 PlaceCard.propTypes = {
+    id: PropTypes.number.isRequired,
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
     rating: PropTypes.string,
 };
 
-// Значення за замовчуванням для необов'язкових пропсів
 PlaceCard.defaultProps = {
     description: "Опис недоступний",
 };
