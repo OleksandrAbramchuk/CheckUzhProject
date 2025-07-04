@@ -1,17 +1,13 @@
-import PropTypes from "prop-types";
 import React from "react";
 import { Navigate } from "react-router-dom";
-
 import { useAuth } from "../context/AuthContext";
 
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth();
+    const { accessToken, loading } = useAuth();
 
-    return isAuthenticated ? children : <Navigate to="/authorization" />;
-};
+    if (loading) return <div>Завантаження...</div>;
 
-ProtectedRoute.propTypes = {
-    children: PropTypes.node.isRequired,
+    return accessToken ? children : <Navigate to="/authorization" />;
 };
 
 export default ProtectedRoute;
