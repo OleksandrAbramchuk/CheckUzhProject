@@ -3,15 +3,15 @@ import './App.css';
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
-import Header from "./components/Header";
+import Header from "./components/Header/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
-import Authorization from "./pages/Authorization";
+import Authorization from "./pages/AuthorizationPage/Authorization";
 import Favorites from "./pages/Favorites";
 import Home from "./pages/Home";
-import Profile from "./pages/Profile";
+import Profile from "./pages/Profile/Profile";
 import Quests from "./pages/Quests";
-import Registration from "./pages/Registration";
+import Registration from "./pages/RegistrationPage/Registration";
 
 const App = () => {
     return (
