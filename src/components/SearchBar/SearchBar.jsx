@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+
 import { StyledInput } from './styles';
 
 const SearchBar = ({ placeholder = 'Пошук...', onSearch }) => {

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { CardContainer, Image, Title, RatingContainer, HeartButton, DetailsButton } from './styles';
+
+import { CardContainer, DetailsButton, HeartButton, Image, RatingContainer, Title } from './styles';
 
 const LikedPlaceCard = ({ image, title, rating }) => {
     const [isLiked, setIsLiked] = useState(false);
