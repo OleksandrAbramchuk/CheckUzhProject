@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+
 import { useAuth } from '../../context/AuthContext';
-import { PageWrapper, Card, Title, Input, Button, ErrorText, LinkText } from './styles';
+import { Button, Card, ErrorText, Input, LinkText, PageWrapper, Title } from './styles';
 
 const AuthorizationPage = () => {
     const { login } = useAuth();
@@ -33,8 +34,8 @@ const AuthorizationPage = () => {
                 login(data.accessToken);
                 navigate('/profile');
             }
-        } catch (err) {
-            setError(err.message);
+        } catch (error_) {
+            setError(error_.message);
         }
     };
 

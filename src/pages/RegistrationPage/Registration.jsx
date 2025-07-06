@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PageWrapper, Card, Title, Input, Button, Message, ErrorText, LinkText } from './styles';
+
+import { Button, Card, ErrorText, Input, LinkText, Message, PageWrapper, Title } from './styles';
 
 const RegistrationPage = () => {
     const [formData, setFormData] = useState({ nickname: '', password: '' });
@@ -38,7 +39,7 @@ const RegistrationPage = () => {
 
             setMessage('✅ Реєстрація успішна! Перенаправлення...');
             setTimeout(() => navigate('/authorization'), 1500);
-        } catch (err) {
+        } catch {
             setError('Щось пішло не так. Спробуйте ще раз.');
         }
     };

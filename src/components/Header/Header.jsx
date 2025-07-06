@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import logo from '../../assets/logo1.png';
 import { useAuth } from '../../context/AuthContext';
-import { HeaderContainer, Logo, NavLinks, NavLink, RegisterButton } from './styles';
+import { HeaderContainer, Logo, NavLink, NavLinks, RegisterButton } from './styles';
 
 const Header = () => {
     const { isAuthenticated, logout } = useAuth();

@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { Container, ImageWrapper, StatueImage, LockIcon, Title, UnlockMessage, Input, UnlockButton } from './styles';
+
+import { Container, ImageWrapper, Input, LockIcon, StatueImage, Title, UnlockButton, UnlockMessage } from './styles';
 
 function StatueUnlock({ statueName, imageUrl, correctCoordinates }) {
     const [isUnlocked, setIsUnlocked] = useState(false);

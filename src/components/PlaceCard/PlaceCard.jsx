@@ -1,16 +1,16 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import GreenButton from '../GreenButton/GreenButton';
 
+import GreenButton from '../GreenButton/GreenButton';
 import {
-    CardContainer,
-    Image,
-    Content,
-    Title,
-    Description,
-    RatingContainer,
     BottomContainer,
+    CardContainer,
+    Content,
+    Description,
     HeartButton,
+    Image,
+    RatingContainer,
+    Title,
 } from './styles';
 
 const PlaceCard = ({ image, title, description, rating }) => {
