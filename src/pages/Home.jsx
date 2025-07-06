@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
 import castleImage from "../assets/castle.png";
 import headerImage from "../assets/headerImage.png";
 import anotherPlaceImage from "../assets/scansen.png";
-import GreenButton from '../components/GreenButton';
-import PlaceCard from "../components/PlaceCard";
-import SearchBar from "../components/SearchBar";
+import GreenButton from '../components/GreenButton/GreenButton';
+import PlaceCard from "../components/PlaceCard/PlaceCard";
+import SearchBar from "../components/SearchBar/SearchBar";
 import Map from '../components/Map';
 
 
@@ -57,6 +57,32 @@ const Description = styled.div`
 `;
 
 const Home = () => {
+
+    const [markers, setMarkers] = useState([]);
+
+    useEffect(() => {
+        const fetchStatues = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/places/all');
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+
+
+                setMarkers(data.map((place) => [
+                    place.latitude,
+                    place.longitude,
+                    place.name,
+                ]));
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+        fetchStatues().then(r => console.log(markers));
+    }, []);
+    useEffect(() => {
+        console.log('Маркери оновлено:', markers);
+    }, [markers]);
     return (
         <div>
             <ContentSection>
@@ -87,7 +113,7 @@ const Home = () => {
                     <SearchBar placeholder="Пошук" />
                 </HeaderContent>
             </GreenBlock>
-            <Map></Map>
+            <Map markers={markers} height={500}/>
             <PlaceCard
                 image={castleImage}
                 title="Ужгородський замок"

@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import styled from "styled-components";
 
 import castleImage from "../assets/castle.png";
-import PlaceCard from "../components/LikedPlaceCard";
+import PlaceCard from "../components/ LikedPlaceCard/LikedPlaceCard";
+import Map from '../components/Map';
 
 
 const likedPlaces = [
@@ -37,10 +38,43 @@ const CardsContainer = styled.div`
     gap: 20px;
 `;
 
+const markers = [
+    [48.622016, 22.303276, 'Ужгород'],
+    [48.6232, 22.27626, 'Авангард'],
+];
+
 const Favorites = () => {
+
+    const [markers, setMarkers] = useState([]);
+
+    useEffect(() => {
+        const fetchStatues = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/places/all');
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+
+
+                setMarkers(data.map((place) => [
+                    place.latitude,
+                    place.longitude,
+                    place.name,
+                ]));
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+        fetchStatues().then(r => console.log(markers));
+    }, []);
+    useEffect(() => {
+        console.log('Маркери оновлено:', markers);
+    }, [markers]);
+
     return (
         <PageContainer>
             <Title>Уподобане</Title>
+            <Map markers={markers} height={500}/>
             <CardsContainer>
                 {likedPlaces.map((place) => (
                     <PlaceCard
