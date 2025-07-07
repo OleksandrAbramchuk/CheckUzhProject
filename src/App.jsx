@@ -8,10 +8,11 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import Authorization from "./pages/AuthorizationPage/Authorization";
 import Favorites from "./pages/Favorites";
-import Home from "./pages/Home";
+import Home from "./pages/Home/Home";
 import Profile from "./pages/Profile/Profile";
 import Quests from "./pages/Quests";
 import Registration from "./pages/RegistrationPage/Registration";
+import PlacePage from "./pages/PlacePage/PlacePage";
 
 const App = () => {
     return (
@@ -23,6 +24,7 @@ const App = () => {
                         <Route path="/" element={<Home />} />
                         <Route path="/authorization" element={<Authorization />} />
                         <Route path="/register" element={<Registration />} />
+                        <Route path="/place/:id" element={<PlacePage />} />
 
                         <Route
                             path="/quests"
