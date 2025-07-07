@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import GreenButton from '../GreenButton/GreenButton';
@@ -14,16 +14,12 @@ import {
     Title,
 } from './styles';
 
-const PlaceCard = ({ id, image, title, description, rating }) => {
-    const [isLiked, setIsLiked] = useState(false);
+const PlaceCard = ({ id, image, title, description, rating, isFavorite, onToggleFavorite }) => {
     const navigate = useNavigate();
 
-    const toggleLike = () => {
-        setIsLiked(!isLiked);
-    };
     const goToDetails = () => {
         navigate(`/place/${id}`);
-    }
+    };
 
     return (
         <CardContainer>
@@ -34,7 +30,11 @@ const PlaceCard = ({ id, image, title, description, rating }) => {
                 <BottomContainer>
                     <RatingContainer>{rating} ★★★★★</RatingContainer>
                     <div>
-                        <HeartButton isLiked={isLiked} onClick={toggleLike}>
+                        <HeartButton
+                            isLiked={isFavorite}
+                            onClick={() => onToggleFavorite(id)}
+                            aria-label={isFavorite ? 'Видалити з улюблених' : 'Додати в улюблені'}
+                        >
                             ♥
                         </HeartButton>
                         <GreenButton onClick={goToDetails}>Деталі</GreenButton>
@@ -50,11 +50,15 @@ PlaceCard.propTypes = {
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
-    rating: PropTypes.string,
+    rating: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    isFavorite: PropTypes.bool,
+    onToggleFavorite: PropTypes.func,
 };
 
 PlaceCard.defaultProps = {
     description: 'Опис недоступний',
+    rating: '—',
+    isFavorite: false,
 };
 
 export default PlaceCard;

@@ -7,7 +7,7 @@ import Header from "./components/Header/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
 import Authorization from "./pages/AuthorizationPage/Authorization";
-import Favorites from "./pages/Favorites";
+import Favorites from "./pages/Favorites/Favorites";
 import Home from "./pages/Home/Home";
 import Profile from "./pages/Profile/Profile";
 import Quests from "./pages/Quests";
