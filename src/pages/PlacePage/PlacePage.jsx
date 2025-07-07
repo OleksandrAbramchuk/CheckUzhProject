@@ -14,6 +14,7 @@ import {
     FavoriteButton,
     MapPlaceholder,
 } from './styles';
+import Map from '../../components/Map';
 
 const PlacePage = () => {
     const { id } = useParams();
@@ -55,7 +56,7 @@ const PlacePage = () => {
             <BottomSection>
                 <Rating>Рейтинг: {place.rating ?? '—'}</Rating>
                 <FavoriteButton>Додати в уподобане</FavoriteButton>
-                <MapPlaceholder>Мапа з координатами місця (зʼявиться пізніше)</MapPlaceholder>
+                <Map markers={[[place.latitude,place.longitude,place.name]]} height={500}/>
             </BottomSection>
         </Container>
     );
