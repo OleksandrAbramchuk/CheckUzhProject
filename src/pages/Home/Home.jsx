@@ -25,6 +25,32 @@ const Home = () => {
     const [hasMore, setHasMore] = useState(true);
     const placesRef = useRef(null);
 
+    const [markers, setMarkers] = useState([]);
+
+    useEffect(() => {
+        const fetchStatues = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/places/all');
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+
+
+                setMarkers(data.map((place) => [
+                    place.latitude,
+                    place.longitude,
+                    place.name,
+                ]));
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+        fetchStatues().then(r => console.log(markers));
+    }, []);
+    useEffect(() => {
+        console.log('Маркери оновлено:', markers);
+    }, [markers]);
+
     useEffect(() => {
         const importPlacesOnce = async () => {
             try {
@@ -73,10 +99,29 @@ const Home = () => {
             }
         };
 
+        const fetchAllPlaces = async () => {
+            try {
+                const res = await fetch('http://localhost:5000/places/all');
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+
+
+                setMarkers(data.map((place) => [
+                    place.latitude,
+                    place.longitude,
+                    place.name,
+                ]));
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+
         const run = async () => {
             await importPlacesOnce();
             await fetchCategories();
             await fetchPlaces();
+            await fetchAllPlaces();
         };
 
         run();
@@ -104,7 +149,7 @@ const Home = () => {
                     </GreenButton>
                 </Description>
             </ContentSection>
-            <Map />
+            <Map markers={markers} height={500}/>
             <div ref={placesRef} />
             <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
                 <select

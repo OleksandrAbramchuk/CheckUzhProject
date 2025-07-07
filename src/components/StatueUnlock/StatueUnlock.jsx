@@ -2,8 +2,9 @@ import PropTypes from 'prop-types';
 import React, { useState } from 'react';
 
 import { Container, ImageWrapper, Input, LockIcon, StatueImage, Title, UnlockButton, UnlockMessage } from './styles';
+import Map from '../Map';
 
-function StatueUnlock({ statueName, imageUrl, correctCoordinates }) {
+function StatueUnlock({ statueName, imageUrl, correctCoordinates, latitude, longitude }) {
     const [isUnlocked, setIsUnlocked] = useState(false);
     const [inputCoordinates, setInputCoordinates] = useState('');
 
@@ -19,11 +20,15 @@ function StatueUnlock({ statueName, imageUrl, correctCoordinates }) {
         <Container>
             <ImageWrapper>
                 <StatueImage src={imageUrl} alt={statueName} isUnlocked={isUnlocked} />
+
                 {!isUnlocked && <LockIcon>🔒</LockIcon>}
             </ImageWrapper>
             <Title>{statueName}</Title>
             {isUnlocked ? (
-                <UnlockMessage>✔ Знайдено!</UnlockMessage>
+                <div>
+                    <Map markers={[[latitude,longitude,statueName]]} height={200}/>
+                    <UnlockMessage>✔ Знайдено!</UnlockMessage>
+                </div>
             ) : (
                 <>
                     <Input
@@ -43,6 +48,8 @@ StatueUnlock.propTypes = {
     statueName: PropTypes.string.isRequired,
     imageUrl: PropTypes.string.isRequired,
     correctCoordinates: PropTypes.string.isRequired,
+    latitude: PropTypes.number.isRequired,
+    longitude: PropTypes.number.isRequired
 };
 
 export default StatueUnlock;
