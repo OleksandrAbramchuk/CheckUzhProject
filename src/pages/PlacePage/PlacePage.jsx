@@ -92,8 +92,6 @@ const PlacePage = () => {
                 <FavoriteButton onClick={toggleFavorite}>
                     {isFavorite ? 'Видалити з уподобаних' : 'Додати в уподобане'}
                 </FavoriteButton>
-                <MapPlaceholder>Мапа з координатами місця (зʼявиться пізніше)</MapPlaceholder>
-                <FavoriteButton>Додати в уподобане</FavoriteButton>
                 <Map markers={[[place.latitude,place.longitude,place.name]]} height={500}/>
             </BottomSection>
         </Container>

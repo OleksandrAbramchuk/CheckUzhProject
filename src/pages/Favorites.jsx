@@ -10,7 +10,7 @@ import { useAuth } from '../context/AuthContext';
 const likedPlaces = [
     {
         id: 1,
-        image:{castleImage},// Заміни на коректний шлях
+        image:{castleImage},
         title: "Ужгородський замок",
         rating: "10/10",
     },
