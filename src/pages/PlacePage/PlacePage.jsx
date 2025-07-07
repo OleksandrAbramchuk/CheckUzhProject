@@ -16,18 +16,24 @@ import {
 } from './styles';
 import Map from '../../components/Map';
 
+import { getFavorites, addToFavorites, removeFromFavorites } from '../../utils/favorites';
+
 const PlacePage = () => {
     const { id } = useParams();
     const [place, setPlace] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isFavorite, setIsFavorite] = useState(false);
 
     useEffect(() => {
         const fetchPlace = async () => {
             try {
-                const response = await axios.get(`http://localhost:5000/places/${id}`);
-                setPlace(response.data);
+                const response = await fetch(`http://localhost:5000/places/${id}`);
+                if (!response.ok) throw new Error('Місце не знайдено');
+                const data = await response.json();
+                setPlace(data);
             } catch (error) {
                 console.error('Помилка при завантаженні місця:', error);
+                setPlace(null);
             } finally {
                 setLoading(false);
             }
@@ -35,6 +41,34 @@ const PlacePage = () => {
 
         fetchPlace();
     }, [id]);
+
+    useEffect(() => {
+        const checkFavorite = async () => {
+            try {
+                const favorites = await getFavorites();
+                setIsFavorite(favorites.some((fav) => fav.id === Number(id)));
+            } catch (error) {
+                console.error('Помилка отримання улюблених:', error);
+            }
+        };
+
+        checkFavorite();
+    }, [id]);
+
+    const toggleFavorite = async () => {
+        if (!place) return;
+        try {
+            if (isFavorite) {
+                await removeFromFavorites(place.id);
+                setIsFavorite(false);
+            } else {
+                await addToFavorites(place.id);
+                setIsFavorite(true);
+            }
+        } catch (error) {
+            console.error('Помилка при зміні уподобаного:', error);
+        }
+    };
 
     if (loading) return <p style={{ textAlign: 'center' }}>Завантаження...</p>;
     if (!place) return <p style={{ textAlign: 'center' }}>Місце не знайдено</p>;
@@ -55,6 +89,10 @@ const PlacePage = () => {
 
             <BottomSection>
                 <Rating>Рейтинг: {place.rating ?? '—'}</Rating>
+                <FavoriteButton onClick={toggleFavorite}>
+                    {isFavorite ? 'Видалити з уподобаних' : 'Додати в уподобане'}
+                </FavoriteButton>
+                <MapPlaceholder>Мапа з координатами місця (зʼявиться пізніше)</MapPlaceholder>
                 <FavoriteButton>Додати в уподобане</FavoriteButton>
                 <Map markers={[[place.latitude,place.longitude,place.name]]} height={500}/>
             </BottomSection>

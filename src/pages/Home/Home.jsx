@@ -14,6 +14,12 @@ import GreenButton from '../../components/GreenButton/GreenButton';
 import Map from '../../components/Map';
 import PlaceCard from '../../components/PlaceCard/PlaceCard';
 
+import {
+    getFavorites,
+    addToFavorites,
+    removeFromFavorites,
+} from '../../utils/favorites';
+
 const Home = () => {
     const [places, setPlaces] = useState([]);
     const [page, setPage] = useState(1);
@@ -23,9 +29,10 @@ const Home = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [hasMore, setHasMore] = useState(true);
-    const placesRef = useRef(null);
-
     const [markers, setMarkers] = useState([]);
+    const [favoriteIds, setFavoriteIds] = useState([]);
+
+    const placesRef = useRef(null);
 
     useEffect(() => {
         const fetchStatues = async () => {
@@ -33,20 +40,19 @@ const Home = () => {
                 const res = await fetch('http://localhost:5000/places/all');
                 if (!res.ok) throw new Error('Помилка при отриманні статуй');
                 const data = await res.json();
-
-
                 setMarkers(data.map((place) => [
                     place.latitude,
                     place.longitude,
                     place.name,
                 ]));
             } catch (err) {
-                //setError(err.message || 'Щось пішло не так...');
+                console.error('Помилка маркерів:', err);
             }
         };
 
-        fetchStatues().then(r => console.log(markers));
+        fetchStatues();
     }, []);
+
     useEffect(() => {
         console.log('Маркери оновлено:', markers);
     }, [markers]);
@@ -70,14 +76,13 @@ const Home = () => {
                 const response = await axios.get('http://localhost:5000/places/categories');
                 if (Array.isArray(response.data)) {
                     const validCategories = response.data.filter((cat) => typeof cat === 'string' && cat.trim() !== '');
-
                     setCategories(validCategories);
                 } else {
-                    console.warn('Неправильний формат даних з /categories');
+                    console.warn('Неправильний формат категорій');
                     setCategories([]);
                 }
             } catch (e) {
-                console.error('Помилка при завантаженні категорій:', e);
+                console.error('Помилка категорій:', e);
             }
         };
 
@@ -87,12 +92,11 @@ const Home = () => {
                 const response = await axios.get('http://localhost:5000/places', {
                     params: { page, limit, category },
                 });
-
                 setPlaces(response.data.items || []);
                 setHasMore((response.data.items || []).length === limit);
                 setError('');
             } catch (e) {
-                console.error('Помилка при завантаженні місць:', e);
+                console.error('Помилка місць:', e);
                 setError('Помилка при завантаженні місць.');
             } finally {
                 setLoading(false);
@@ -102,30 +106,51 @@ const Home = () => {
         const fetchAllPlaces = async () => {
             try {
                 const res = await fetch('http://localhost:5000/places/all');
-                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                if (!res.ok) throw new Error('Помилка при отриманні всіх місць');
                 const data = await res.json();
-
-
                 setMarkers(data.map((place) => [
                     place.latitude,
                     place.longitude,
                     place.name,
                 ]));
             } catch (err) {
-                //setError(err.message || 'Щось пішло не так...');
+                console.error('Помилка all places:', err);
             }
         };
 
+        const fetchFavorites = async () => {
+            try {
+                const favs = await getFavorites();
+                setFavoriteIds(favs.map((fav) => fav.id));
+            } catch (err) {
+                console.error('Помилка отримання улюблених:', err);
+            }
+        };
 
         const run = async () => {
             await importPlacesOnce();
             await fetchCategories();
             await fetchPlaces();
             await fetchAllPlaces();
+            await fetchFavorites();
         };
 
         run();
     }, [page, limit, category]);
+
+    const handleToggleFavorite = async (placeId) => {
+        try {
+            if (favoriteIds.includes(placeId)) {
+                await removeFromFavorites(placeId);
+                setFavoriteIds((prev) => prev.filter((id) => id !== placeId));
+            } else {
+                await addToFavorites(placeId);
+                setFavoriteIds((prev) => [...prev, placeId]);
+            }
+        } catch (err) {
+            console.error('Не вдалося змінити улюблене місце:', err);
+        }
+    };
 
     return (
         <div>
@@ -149,8 +174,10 @@ const Home = () => {
                     </GreenButton>
                 </Description>
             </ContentSection>
-            <Map markers={markers} height={500}/>
+
+            <Map markers={markers} height={500} />
             <div ref={placesRef} />
+
             <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
                 <select
                     value={category}
@@ -178,21 +205,20 @@ const Home = () => {
 
             {loading && <p style={{ textAlign: 'center' }}>Завантаження...</p>}
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-
             {!loading && !error && places.length === 0 && <p style={{ textAlign: 'center' }}>Немає результатів.</p>}
 
-            {!loading &&
-                !error &&
-                places.map((place) => (
-                    <PlaceCard
-                        key={place.id}
-                        id={place.id}
-                        image={place.imageUrl}
-                        title={place.name}
-                        description={place.text}
-                        rating={place.rating}
-                    />
-                ))}
+            {!loading && !error && places.map((place) => (
+                <PlaceCard
+                    key={place.id}
+                    id={place.id}
+                    image={place.imageUrl}
+                    title={place.name}
+                    description={(place.description || '').slice(0, 120) + '...'}
+                    rating={place.rating}
+                    isFavorite={favoriteIds.includes(place.id)}
+                    onToggleFavorite={handleToggleFavorite}
+                />
+            ))}
 
             <Pagination>
                 <PageButton onClick={() => setPage((prev) => Math.max(1, prev - 1))} disabled={page === 1}>

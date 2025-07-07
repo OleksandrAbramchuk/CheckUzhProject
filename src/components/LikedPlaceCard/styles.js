@@ -1,20 +1,31 @@
 import styled from 'styled-components';
 
 export const CardContainer = styled.div`
-    width: 300px;
-    height: 420px;
-    padding: 16px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-    background: #ffffff;
-    border: 2px solid #61a474;
-    border-radius: 15px;
+    width: 320px;
+    height: 370px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 20px;
+    box-shadow:
+            0 4px 15px rgba(97, 164, 116, 0.3),
+            0 1px 6px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin: 20px;
     text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+
+    &:hover {
+        transform: translateY(-10px);
+        box-shadow:
+                0 10px 25px rgba(97, 164, 116, 0.45),
+                0 4px 15px rgba(0, 0, 0, 0.15);
+    }
 `;
+
 
 export const Image = styled.img`
     width: 250px;
@@ -40,13 +51,6 @@ export const RatingContainer = styled.div`
     justify-content: center;
 `;
 
-export const HeartButton = styled.button`
-    background: none;
-    border: none;
-    font-size: 1.5em;
-    cursor: pointer;
-    color: red;
-`;
 
 export const DetailsButton = styled.button`
     padding: 8px 16px;
@@ -56,9 +60,32 @@ export const DetailsButton = styled.button`
     border: none;
     border-radius: 8px;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background-color 0.3s ease;
 
     &:hover {
         background-color: #4e8a5c;
     }
+`;
+
+export const ButtonsRow = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 12px;
+  width: 100%;
+`;
+
+export const DeleteButton = styled.button`
+  padding: 8px 16px;
+  font-size: 1em;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #c0392b;
+  }
 `;
