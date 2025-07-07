@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import GreenButton from '../GreenButton/GreenButton';
 import {
@@ -13,12 +14,16 @@ import {
     Title,
 } from './styles';
 
-const PlaceCard = ({ image, title, description, rating }) => {
+const PlaceCard = ({ id, image, title, description, rating }) => {
     const [isLiked, setIsLiked] = useState(false);
+    const navigate = useNavigate();
 
     const toggleLike = () => {
         setIsLiked(!isLiked);
     };
+    const goToDetails = () => {
+        navigate(`/place/${id}`);
+    }
 
     return (
         <CardContainer>
@@ -32,7 +37,7 @@ const PlaceCard = ({ image, title, description, rating }) => {
                         <HeartButton isLiked={isLiked} onClick={toggleLike}>
                             ♥
                         </HeartButton>
-                        <GreenButton>Деталі</GreenButton>
+                        <GreenButton onClick={goToDetails}>Деталі</GreenButton>
                     </div>
                 </BottomContainer>
             </Content>
@@ -41,6 +46,7 @@ const PlaceCard = ({ image, title, description, rating }) => {
 };
 
 PlaceCard.propTypes = {
+    id: PropTypes.number.isRequired,
     image: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     description: PropTypes.string,
