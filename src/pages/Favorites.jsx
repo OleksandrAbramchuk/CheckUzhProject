@@ -4,6 +4,7 @@ import styled from "styled-components";
 import castleImage from "../assets/castle.png";
 import PlaceCard from "../components/ LikedPlaceCard/LikedPlaceCard";
 import Map from '../components/Map';
+import { useAuth } from '../context/AuthContext';
 
 
 const likedPlaces = [
@@ -45,12 +46,16 @@ const markers = [
 
 const Favorites = () => {
 
+    const { accessToken, loading: authLoading } = useAuth();
+
     const [markers, setMarkers] = useState([]);
 
     useEffect(() => {
-        const fetchStatues = async () => {
+        const fetchFavorites = async () => {
             try {
-                const res = await fetch('http://localhost:5000/places/all');
+                const res = await fetch('http://localhost:5000/users/me/favorites', {headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },});
                 if (!res.ok) throw new Error('Помилка при отриманні статуй');
                 const data = await res.json();
 
@@ -65,11 +70,8 @@ const Favorites = () => {
             }
         };
 
-        fetchStatues().then(r => console.log(markers));
-    }, []);
-    useEffect(() => {
-        console.log('Маркери оновлено:', markers);
-    }, [markers]);
+        fetchFavorites()
+    }, [accessToken, authLoading]);
 
     return (
         <PageContainer>

@@ -181,6 +181,7 @@ const Profile = () => {
     const [saved, setSaved] = useState(false);
     const [localLoading, setLocalLoading] = useState(false);
     const [error, setError] = useState('');
+    const [foundStatues, setFoundStatues] = useState([]);
 
     useEffect(() => {
         setLocalLoading(true);
@@ -209,6 +210,22 @@ const Profile = () => {
                 console.error('Помилка при завантаженні профілю:', err);
             })
             .finally(() => setLocalLoading(false));
+
+        const fetchFoundStatues = async  ()=> {
+            try {
+                const res = await fetch('http://localhost:5000/quest/me',{
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },});
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+                setFoundStatues(data.foundPlaces.length);
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+        fetchFoundStatues();
     }, [accessToken, authLoading]);
 
     const handleSaveProfile = async () => {
@@ -297,7 +314,7 @@ const Profile = () => {
                                 <strong>Уподобано:</strong> 0
                             </div>
                             <div>
-                                <strong>Квест:</strong> 0/84
+                                <strong>Квест:</strong> {foundStatues}/74
                             </div>
                         </Section>
                         <Button onClick={handleSaveProfile} disabled={localLoading}>

@@ -11,7 +11,7 @@ const customIcon = new Icon({
     iconSize: [38, 38],
 });
 
-const Map = ({ markers, height}) => {
+const Map = ({ markers = [], height}) => {
     return (
         <MapContainer center={[48.622016, 22.303276]} zoom={12} style={{ height: height+'px', width: '100%' }}>
             <TileLayer

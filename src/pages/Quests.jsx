@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import StatueUnlock from '../components/StatueUnlock/StatueUnlock';
 import Map from '../components/Map';
+import { useAuth } from '../context/AuthContext';
 
 const markers = [
     [48.622069, 22.298199,'Міні-скульптура «Миколайчик – помічник святого Миколая»'],
@@ -75,6 +76,8 @@ const markers = [
 function Quests() {
 
     const [statues, setStatues] = useState([]);
+    const [foundStatues, setFoundStatues] = useState([]);
+    const { accessToken, loading: authLoading } = useAuth();
 
     useEffect(() => {
         const fetchStatues = async () => {
@@ -88,13 +91,34 @@ function Quests() {
             }
         };
 
-        fetchStatues().then(r => console.log(statues));
-    }, []);
+        const fetchFoundStatues = async  ()=> {
+            try {
+                const res = await fetch('http://localhost:5000/quest/me',{
+                    headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                    },});
+                if (!res.ok) throw new Error('Помилка при отриманні статуй');
+                const data = await res.json();
+                setFoundStatues(data.foundPlaces);
+            } catch (err) {
+                //setError(err.message || 'Щось пішло не так...');
+            }
+        };
+
+        fetchStatues();
+        fetchFoundStatues();
+    }, [accessToken, authLoading]);
+
+    useEffect(()=>
+    {
+        console.log(statues)
+        console.log(foundStatues)
+    },[statues,foundStatues])
 
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
             <h1>Квест</h1>
-            <Map markers={markers} height={500}/>
+            <Map height={500}/>
             <div
                 style={{
                     display: 'grid',
@@ -103,14 +127,28 @@ function Quests() {
                 }}
             >
                 {statues.map((statue) => (
-                    <StatueUnlock
-                        key={statue.id}
-                        statueName={statue.name}
-                        imageUrl={statue.imageUrl}
-                        correctCoordinates={statue.latitude+', '+statue.longitude}
-                        latitude={statue.latitude}
-                        longitude={statue.longitude}
-                    />
+                    foundStatues.some(s => s.id === statue.id)  ?(
+                        <StatueUnlock
+                            key={statue.id}
+                            statueName={statue.name}
+                            imageUrl={statue.imageUrl}
+                            correctCoordinates={statue.latitude+', '+statue.longitude}
+                            latitude={statue.latitude}
+                            longitude={statue.longitude}
+                            found={true}
+                        />
+                        ) : (
+                            <StatueUnlock
+                                key={statue.id}
+                                statueName={statue.name}
+                                imageUrl={statue.imageUrl}
+                                correctCoordinates={statue.latitude+', '+statue.longitude}
+                                latitude={statue.latitude}
+                                longitude={statue.longitude}
+                                found={false}
+                            />
+                        )
+
                 ))}
             </div>
         </div>
