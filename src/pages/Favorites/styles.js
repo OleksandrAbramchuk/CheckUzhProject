@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const PageContainer = styled.div`
     padding: 50px 30px;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c2d5ea 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
     min-height: 100vh;
     display: flex;
     flex-direction: column;

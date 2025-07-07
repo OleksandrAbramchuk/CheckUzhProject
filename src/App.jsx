@@ -10,7 +10,7 @@ import Authorization from "./pages/AuthorizationPage/Authorization";
 import Favorites from "./pages/Favorites/Favorites";
 import Home from "./pages/Home/Home";
 import Profile from "./pages/Profile/Profile";
-import Quests from "./pages/Quests";
+import Quests from "./pages/Quests/Quests";
 import Registration from "./pages/RegistrationPage/Registration";
 import PlacePage from "./pages/PlacePage/PlacePage";
 

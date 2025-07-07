@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 
-import StatueUnlock from '../components/StatueUnlock/StatueUnlock';
-import Map from '../components/Map';
-import { useAuth } from '../context/AuthContext';
+import StatueUnlock from '../../components/StatueUnlock/StatueUnlock';
+import Map from '../../components/Map';
+import { useAuth } from '../../context/AuthContext';
+import { MapWrapper, Title, GridContainer } from './styles';
 
 const markers = [
     [48.622069, 22.298199,'Міні-скульптура «Миколайчик – помічник святого Миколая»'],
@@ -74,7 +75,6 @@ const markers = [
 ];
 
 function Quests() {
-
     const [statues, setStatues] = useState([]);
     const [foundStatues, setFoundStatues] = useState([]);
     const { accessToken, loading: authLoading } = useAuth();
@@ -86,71 +86,57 @@ function Quests() {
                 if (!res.ok) throw new Error('Помилка при отриманні статуй');
                 const data = await res.json();
                 setStatues(data);
-            } catch (err) {
-                //setError(err.message || 'Щось пішло не так...');
-            }
+            } catch (err) {}
         };
 
-        const fetchFoundStatues = async  ()=> {
+        const fetchFoundStatues = async () => {
             try {
-                const res = await fetch('http://localhost:5000/quest/me',{
+                const res = await fetch('http://localhost:5000/quest/me', {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
-                    },});
+                    },
+                });
                 if (!res.ok) throw new Error('Помилка при отриманні статуй');
                 const data = await res.json();
                 setFoundStatues(data.foundPlaces);
-            } catch (err) {
-                //setError(err.message || 'Щось пішло не так...');
-            }
+            } catch (err) {}
         };
 
         fetchStatues();
         fetchFoundStatues();
     }, [accessToken, authLoading]);
 
-    useEffect(()=>
-    {
-        console.log(statues)
-        console.log(foundStatues)
-    },[statues,foundStatues])
-
     return (
         <div style={{ padding: '20px', textAlign: 'center' }}>
-            <h1>Квест</h1>
-            <Map height={500}/>
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'repeat(4, 1fr)',
-                    gap: '20px',
-                }}
-            >
+            <Title>Квест</Title>
+            <MapWrapper>
+                <Map height={500} />
+            </MapWrapper>
+            <GridContainer>
                 {statues.map((statue) => (
-                    foundStatues.some(s => s.id === statue.id)  ?(
+                    foundStatues.some(s => s.id === statue.id) ? (
                         <StatueUnlock
                             key={statue.id}
                             statueName={statue.name}
                             imageUrl={statue.imageUrl}
-                            correctCoordinates={statue.latitude+', '+statue.longitude}
+                            correctCoordinates={`${statue.latitude}, ${statue.longitude}`}
                             latitude={statue.latitude}
                             longitude={statue.longitude}
                             found={true}
                         />
-                        ) : (
-                            <StatueUnlock
-                                key={statue.id}
-                                statueName={statue.name}
-                                imageUrl={statue.imageUrl}
-                                correctCoordinates={statue.latitude+', '+statue.longitude}
-                                latitude={statue.latitude}
-                                longitude={statue.longitude}
-                                found={false}
-                            />
-                        )
-
+                    ) : (
+                        <StatueUnlock
+                            key={statue.id}
+                            statueName={statue.name}
+                            imageUrl={statue.imageUrl}
+                            correctCoordinates={`${statue.latitude}, ${statue.longitude}`}
+                            latitude={statue.latitude}
+                            longitude={statue.longitude}
+                            found={false}
+                        />
+                    )
                 ))}
-            </div>
+            </GridContainer>
         </div>
     );
 }

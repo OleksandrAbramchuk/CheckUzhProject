@@ -83,7 +83,7 @@ const PlacePage = () => {
                 <InfoBlock>
                     <Title>{place.name}</Title>
                     <Location>{place.address || 'Категорія не вказана'}</Location>
-                    <Description>{place.text || 'Опис відсутній.'}</Description>
+                    <Description>{place.description || 'Опис відсутній.'}</Description>
                 </InfoBlock>
             </TopSection>
 

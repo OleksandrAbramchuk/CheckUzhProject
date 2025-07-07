@@ -1,75 +1,88 @@
 import styled from 'styled-components';
 
 export const CardContainer = styled.div`
-    width: 900px;
-    height: 300px;
-    padding: 16px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-    background: #f0f0f0;
-    border: 3px solid #61a474;
-    border-radius: 49px;
+    max-width: 860px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin: 20px auto;
+    flex-direction: row;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+    margin: 24px auto;
+    transition: transform 0.2s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+    }
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        max-width: 95%;
+    }
 `;
 
 export const Image = styled.img`
-    width: 400px;
-    height: 280px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.42);
-    border-radius: 12px;
-    margin-right: 20px;
+    width: 300px;
+    height: auto;
+    object-fit: cover;
+    flex-shrink: 0;
+
+    @media (max-width: 768px) {
+        width: 100%;
+        height: 220px;
+    }
 `;
 
 export const Content = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
+    padding: 24px;
 `;
 
 export const Title = styled.h2`
-    font-size: 25px;
-    font-weight: bold;
-    margin: 0;
-    margin-top: 15px;
+    font-size: 24px;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0 0 12px 0;
 `;
 
 export const Description = styled.p`
-    font-size: 18px;
-    color: #666;
-    margin: 10px 0;
-    line-height: 1.4;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.6;
+    margin: 0 0 16px 0;
     flex-grow: 1;
 `;
 
 export const RatingContainer = styled.div`
-    display: flex;
-    align-items: center;
-    font-size: 20px;
-    color: #444;
+    font-size: 18px;
+    color: #f39c12;
+    font-weight: 500;
 `;
 
 export const BottomContainer = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 40px;
-    margin-bottom: 10px;
+    gap: 16px;
+    margin-top: auto;
+
+    @media (max-width: 480px) {
+        flex-direction: column;
+        align-items: flex-start;
+    }
 `;
 
 export const HeartButton = styled.button`
     background: none;
     border: none;
-    font-size: 48px;
+    font-size: 28px;
     cursor: pointer;
-    color: ${(properties) => (properties.isLiked ? 'red' : '#ccc')};
-    margin-right: 10px;
+    color: ${(props) => (props.isLiked ? '#e74c3c' : '#bdc3c7')};
     transition: color 0.3s;
 
     &:hover {
-        color: red;
+        color: #e74c3c;
     }
 `;

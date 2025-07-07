@@ -7,6 +7,9 @@ import {
     Description,
     Pagination,
     PageButton,
+    CategoryButtons,
+    CategoryButton,
+    MapWrapper
 } from './styles';
 
 import headerImage from '../../assets/headerImage.png';
@@ -20,6 +23,14 @@ import {
     removeFromFavorites,
 } from '../../utils/favorites';
 
+const CATEGORY_TRANSLATIONS = {
+    statue: 'Статуї',
+    museum: 'Музеї',
+    theatre: 'Театри',
+    park: 'Парки',
+    historic: 'Історичні пам’ятки',
+};
+
 const Home = () => {
     const [places, setPlaces] = useState([]);
     const [page, setPage] = useState(1);
@@ -31,8 +42,24 @@ const Home = () => {
     const [hasMore, setHasMore] = useState(true);
     const [markers, setMarkers] = useState([]);
     const [favoriteIds, setFavoriteIds] = useState([]);
+    const [totalPages, setTotalPages] = useState(1);
 
     const placesRef = useRef(null);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/places/categories');
+            if (Array.isArray(response.data)) {
+                const validCategories = response.data.filter((cat) => typeof cat === 'string' && cat.trim() !== '');
+                setCategories(validCategories);
+            } else {
+                console.warn('Неправильний формат категорій');
+                setCategories([]);
+            }
+        } catch (e) {
+            console.error('Помилка категорій:', e);
+        }
+    };
 
     useEffect(() => {
         const fetchStatues = async () => {
@@ -54,8 +81,8 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        console.log('Маркери оновлено:', markers);
-    }, [markers]);
+        fetchCategories();
+    }, [category, page]);
 
     useEffect(() => {
         const importPlacesOnce = async () => {
@@ -71,21 +98,6 @@ const Home = () => {
             }
         };
 
-        const fetchCategories = async () => {
-            try {
-                const response = await axios.get('http://localhost:5000/places/categories');
-                if (Array.isArray(response.data)) {
-                    const validCategories = response.data.filter((cat) => typeof cat === 'string' && cat.trim() !== '');
-                    setCategories(validCategories);
-                } else {
-                    console.warn('Неправильний формат категорій');
-                    setCategories([]);
-                }
-            } catch (e) {
-                console.error('Помилка категорій:', e);
-            }
-        };
-
         const fetchPlaces = async () => {
             setLoading(true);
             try {
@@ -94,27 +106,13 @@ const Home = () => {
                 });
                 setPlaces(response.data.items || []);
                 setHasMore((response.data.items || []).length === limit);
+                setTotalPages(Math.ceil((response.data.total || 0) / limit));
                 setError('');
             } catch (e) {
                 console.error('Помилка місць:', e);
                 setError('Помилка при завантаженні місць.');
             } finally {
                 setLoading(false);
-            }
-        };
-
-        const fetchAllPlaces = async () => {
-            try {
-                const res = await fetch('http://localhost:5000/places/all');
-                if (!res.ok) throw new Error('Помилка при отриманні всіх місць');
-                const data = await res.json();
-                setMarkers(data.map((place) => [
-                    place.latitude,
-                    place.longitude,
-                    place.name,
-                ]));
-            } catch (err) {
-                console.error('Помилка all places:', err);
             }
         };
 
@@ -129,9 +127,7 @@ const Home = () => {
 
         const run = async () => {
             await importPlacesOnce();
-            await fetchCategories();
             await fetchPlaces();
-            await fetchAllPlaces();
             await fetchFavorites();
         };
 
@@ -152,6 +148,23 @@ const Home = () => {
         }
     };
 
+    const handleRatePlace = async (placeId, rating) => {
+        try {
+            await axios.post(
+                `http://localhost:5000/places/${placeId}/rate`,
+                { rating },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem('accessToken')}`,
+                    },
+                }
+            );
+            console.log(`Поставлено рейтинг ${rating} для місця з id ${placeId}`);
+        } catch (err) {
+            console.error('Помилка при встановленні рейтингу:', err);
+        }
+    };
+
     return (
         <div>
             <ContentSection>
@@ -159,7 +172,7 @@ const Home = () => {
                     <img
                         src={headerImage}
                         alt="Header"
-                        style={{ width: '100%', height: '100%', borderRadius: '8px' }}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                     />
                 </ImagePlaceholder>
                 <Description>
@@ -175,33 +188,31 @@ const Home = () => {
                 </Description>
             </ContentSection>
 
-            <Map markers={markers} height={500} />
+            <MapWrapper>
+                <Map markers={markers} height={500} />
+            </MapWrapper>
             <div ref={placesRef} />
 
-            <div style={{ display: 'flex', justifyContent: 'center', margin: '20px 0' }}>
-                <select
-                    value={category}
-                    onChange={(e) => {
-                        setCategory(e.target.value);
-                        setPage(1);
-                    }}
-                    style={{
-                        padding: '10px 15px',
-                        borderRadius: '6px',
-                        border: '1px solid #ccc',
-                        fontSize: '16px',
-                        minWidth: '220px',
-                        cursor: 'pointer',
-                    }}
+            <CategoryButtons>
+                <CategoryButton
+                    onClick={() => setCategory('')}
+                    className={category === '' ? 'active' : ''}
                 >
-                    <option value="">Усі категорії</option>
-                    {categories.map((cat) => (
-                        <option key={cat} value={cat}>
-                            {cat.charAt(0).toUpperCase() + cat.slice(1)}
-                        </option>
-                    ))}
-                </select>
-            </div>
+                    Усі
+                </CategoryButton>
+                {categories.map((cat) => (
+                    <CategoryButton
+                        key={cat}
+                        onClick={() => {
+                            setCategory(cat);
+                            setPage(1);
+                        }}
+                        className={category === cat ? 'active' : ''}
+                    >
+                        {CATEGORY_TRANSLATIONS[cat] || cat}
+                    </CategoryButton>
+                ))}
+            </CategoryButtons>
 
             {loading && <p style={{ textAlign: 'center' }}>Завантаження...</p>}
             {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
@@ -217,16 +228,21 @@ const Home = () => {
                     rating={place.rating}
                     isFavorite={favoriteIds.includes(place.id)}
                     onToggleFavorite={handleToggleFavorite}
+                    onRate={handleRatePlace}
                 />
             ))}
 
             <Pagination>
-                <PageButton onClick={() => setPage((prev) => Math.max(1, prev - 1))} disabled={page === 1}>
-                    Назад
-                </PageButton>
-                <PageButton onClick={() => setPage((prev) => prev + 1)} disabled={!hasMore}>
-                    Вперед
-                </PageButton>
+                <PageButton onClick={() => setPage(1)} disabled={page === 1}>1</PageButton>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).slice(1).map((pg) => (
+                    <PageButton
+                        key={pg}
+                        onClick={() => setPage(pg)}
+                        active={pg === page}
+                    >
+                        {pg}
+                    </PageButton>
+                ))}
             </Pagination>
         </div>
     );

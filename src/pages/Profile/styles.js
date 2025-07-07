@@ -2,10 +2,10 @@ import styled, { css } from 'styled-components';
 
 export const theme = {
     colors: {
-        background: '#F4F7FA',
+        background: '#f4f7fa',
         cardBg: '#FFFFFF',
-        primary: '#6fcb65',
-        accent: '#2cdc49',
+        primary: '#8ec89d',
+        accent: '#8ec89d',
         textDark: '#2C3E50',
         textLight: '#7F8C8D',
         border: '#E0E6ED',
@@ -38,9 +38,14 @@ export const Card = styled.div`
 
 export const Header = styled.div`
     background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.accent});
-    color: white;
+    color: #ffffff;
     padding: 24px;
     text-align: center;
+    font-size: 3rem;
+    margin-bottom: 40px;
+    font-weight: 900;
+    letter-spacing: 1.5px;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
 `;
 
 export const Title = styled.h1`
